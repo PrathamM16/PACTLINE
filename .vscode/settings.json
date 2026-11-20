@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  "python.testing.unittestEnabled": true,
+  "python.testing.unittestArgs": ["-s", "tests", "-t", ".", "-p", "test_*.py"],
+  "python.testing.cwd": "${workspaceFolder}/backend",
+  "editor.formatOnSave": true
+}
