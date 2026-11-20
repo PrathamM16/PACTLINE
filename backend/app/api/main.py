@@ -65,7 +65,7 @@ SERVICE_KEYS = {
     "llm": ["LLM_API_KEY", "LLM_MODEL"],
     "google_calendar": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN"],
     "email_reminders": ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD"],
-    "github": ["GITHUB_WEBHOOK_SECRET"],
+    "github": ["GITHUB_TOKEN"],
     "jenkins": ["JENKINS_BASE_URL", "JENKINS_USERNAME", "JENKINS_API_TOKEN"],
     "sonarqube": ["SONARQUBE_CLOUD_URL", "SONARQUBE_TOKEN"],
 }
@@ -77,7 +77,7 @@ def get_service() -> AppService:
         secret = os.environ.get("JWT_SECRET", "")
         if len(secret) < 32:
             raise HTTPException(status_code=503, detail="server misconfigured: JWT_SECRET must be at least 32 characters")
-        store = open_store(os.environ.get("DATABASE_URL", "sqlite:///pactline.db"))
+        store = open_store(os.environ.get("DATABASE_URL") or "sqlite:///pactline.db")
         tz_name = os.environ.get("USER_TIMEZONE", "Asia/Kolkata")
         calendar = GoogleCalendar.from_env(os.environ, urllib_transport)
         mailer = SmtpMailer.from_env(os.environ)

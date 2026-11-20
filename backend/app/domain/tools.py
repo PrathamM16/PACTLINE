@@ -192,6 +192,10 @@ class ToolRegistry:
         self._add("savePreference", "Request remembering a stable user preference. Needs approval.", _schema(key=_param("string", "Short preference name."), value=_param("string", "Preference value.")), self._save_preference, True)
         self._add("listCalendarEvents", "List real Google Calendar events between two dates (inclusive).", _schema(date_from=_param("string", "ISO date YYYY-MM-DD."), date_to=_param("string", "ISO date YYYY-MM-DD.")), self._list_calendar_events, False)
         self._add("createCalendarEvent", "Request adding an event to Google Calendar. Checks for clashes first. Needs approval.", _schema(title=_param("string", "Event title."), start=_param("string", "ISO datetime, local time."), end=_param("string", "ISO datetime, local time."), description=_param("string", "Notes." + OPTIONAL_NOTE), ignore_conflicts=_param("boolean", "True only if the user already said to book despite a clash.")), self._create_event, True, self._calendar_precheck)
+        self._add("listRepositories", "List your GitHub repositories.", _schema(unused=_param("string", "Always pass an empty string.")), self._list_repos, False)
+        self._add("generatePipeline", "Generate a CI/CD pipeline for a GitHub repository. Needs approval.", _schema(owner=_param("string", "Repository owner."), repo=_param("string", "Repository name."), branch=_param("string", "Branch name, e.g., develop."), job_name=_param("string", "Jenkins job name."), node_version=_param("string", "Node version, e.g., 20."), sonar_key=_param("string", "SonarQube project key." + OPTIONAL_NOTE)), self._generate_pipeline, True)
+        self._add("createPipelinePullRequest", "Create a pull request with the generated Jenkinsfile. Needs approval.", _schema(owner=_param("string", "Repository owner."), repo=_param("string", "Repository name."), branch=_param("string", "Branch name for the PR."), jenkinsfile=_param("string", "The Jenkinsfile content."), title=_param("string", "PR title.")), self._create_pr, True)
+        self._add("analyzeSonarQube", "Analyze code quality and security using SonarQube. Returns pass/fail status and recommendations.", _schema(project_key=_param("string", "SonarQube project key (e.g., owner_project).")), self._analyze_sonar, False)
         self._add("getApprovalStatus", "Check whether a requested action was approved and what actually happened.", _schema(approval_id=_param("string", "Approval id returned earlier.")), self._approval_status, False)
         self._add("getDailyBriefing", "Get stored preferences, pending tasks, commitments, disagreements, reminders and pending approvals.", _schema(unused=_param("string", "Always pass an empty string.")), self._briefing, False)
 
@@ -329,6 +333,84 @@ class ToolRegistry:
             "reminders_sent": [brief(r) for r in reminders if r["delivery"] == "sent"],
             "reminders_failed": [brief(r) for r in reminders if r["delivery"] == "failed"],
             "reminders_waiting": [brief(r) for r in reminders if r["delivery"] == "pending"],
+        }
+
+    def _list_repos(self, ctx, a):
+        from app.integrations.github import GitHubClient
+        from app.integrations.http import urllib_transport
+        
+        client = GitHubClient.from_env(__import__("os").environ, urllib_transport)
+        if not client:
+            raise IntegrationUnavailable("GitHub is not configured")
+        repos = client.list_user_repos()
+        return {"repos": repos}
+
+    def _generate_pipeline(self, ctx, a):
+        from app.devops.pipeline import PipelineSpec, generate_jenkinsfile, validate_spec
+        
+        spec = PipelineSpec(
+            job_name=a["job_name"],
+            repository=f"{a['owner']}/{a['repo']}",
+            branch=a["branch"],
+            app_type="angular",
+            node_version=a["node_version"],
+            stages=("install", "lint", "unit_tests", "sonar_analysis", "quality_gate", "build"),
+            sonar_project_key=_blank(a["sonar_key"]),
+        )
+        errors = validate_spec(spec)
+        if errors:
+            raise ValueError("; ".join(errors))
+        content = generate_jenkinsfile(spec)
+        return {"ok": True, "jenkinsfile": content, "job_name": a["job_name"], "repo": a["repo"]}
+
+    def _create_pr(self, ctx, a):
+        from app.integrations.github import GitHubClient
+        from app.integrations.http import urllib_transport
+        
+        client = GitHubClient.from_env(__import__("os").environ, urllib_transport)
+        if not client:
+            raise IntegrationUnavailable("GitHub is not configured")
+        
+        # Create branch
+        default_branch = client.get_default_branch_sha(a["owner"], a["repo"])
+        client.create_branch(a["owner"], a["repo"], a["branch"], default_branch)
+        
+        # Commit Jenkinsfile
+        client.create_or_update_file(
+            a["owner"], a["repo"], "Jenkinsfile", a["jenkinsfile"].encode(), a["branch"],
+            "Add CI/CD pipeline [pactline]"
+        )
+        
+        # Create PR
+        pr = client.create_pull_request(
+            a["owner"], a["repo"], a["title"], a["branch"],
+            a.get("base_branch") or "main",
+            "Generated by PACTLINE"
+        )
+        return {"ok": True, "pr_url": pr.get("html_url"), "pr_number": pr.get("number")}
+
+    def _analyze_sonar(self, ctx, a):
+        from app.integrations.sonarqube import SonarQubeClient
+        from app.integrations.http import urllib_transport
+        
+        client = SonarQubeClient.from_env(__import__("os").environ, urllib_transport)
+        if not client:
+            raise IntegrationUnavailable("SonarQube is not configured")
+        
+        project_key = a["project_key"]
+        summary = client.get_quality_summary(project_key)
+        
+        return {
+            "project_key": project_key,
+            "quality_gate_passed": summary.get("quality_gate_passed", False),
+            "quality_gate_status": summary.get("quality_gate_status"),
+            "coverage": summary.get("coverage", 0),
+            "bugs": summary.get("bugs", 0),
+            "vulnerabilities": summary.get("vulnerabilities", 0),
+            "code_smells": summary.get("code_smells", 0),
+            "open_issues": summary.get("open_issues", 0),
+            "recommendation": summary.get("recommendation", ""),
+            "failed_conditions": summary.get("failed_conditions", []),
         }
 
     def _briefing(self, ctx, a):
