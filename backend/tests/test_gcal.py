@@ -110,6 +110,12 @@ class ListEventsTest(unittest.TestCase):
         cal, _ = calendar([(200, TOKEN_OK), (200, body)])
         self.assertFalse(cal.list_events(START, END)[0]["all_day"])
 
+    def test_utc_times_are_converted_to_configured_timezone(self):
+        body = json.dumps({"items": [{"id": "1", "summary": "Call", "start": {"dateTime": "2026-11-21T03:30:00Z"}, "end": {"dateTime": "2026-11-21T04:00:00Z"}}]}).encode()
+        cal, _ = calendar([(200, TOKEN_OK), (200, body)])
+        event = cal.list_events(START, END)[0]
+        self.assertEqual((event["start"], event["end"]), ("2026-11-21T09:00:00+05:30", "2026-11-21T09:30:00+05:30"))
+
     def test_list_failure_raises_provider_error(self):
         cal, _ = calendar([(200, TOKEN_OK), (500, b"{}")])
         with self.assertRaises(ProviderError):

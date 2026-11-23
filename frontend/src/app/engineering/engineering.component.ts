@@ -10,7 +10,7 @@ interface Preview { valid: boolean; errors: string[]; jenkinsfile?: string; }
   imports: [FormsModule],
   template: `
     <h2>Pipeline builder</h2>
-    <div class="card">
+    <div class="card stack">
       <input placeholder="job name" [(ngModel)]="jobName">
       <input placeholder="owner/repo" [(ngModel)]="repository">
       <input placeholder="branch" [(ngModel)]="branch">

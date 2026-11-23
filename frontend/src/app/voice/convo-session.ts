@@ -1,5 +1,5 @@
 import AgoraRTC, { IAgoraRTCClient, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
-import { RTMClient } from 'agora-rtm-sdk';
+import AgoraRTM, { RTMClient } from 'agora-rtm-sdk';
 import { AgoraVoiceAI, AgoraVoiceAIEvents, TranscriptHelperMode } from 'agora-agent-client-toolkit';
 import { api } from '../core/auth';
 
@@ -68,7 +68,7 @@ export class ConvoSession {
       this.mic = await AgoraRTC.createMicrophoneAudioTrack();
       await this.rtc.publish([this.mic]);
 
-      this.rtm = new RTMClient(token.appId, String(userUid));
+      this.rtm = new AgoraRTM.RTM(token.appId, String(userUid));
       await this.rtm.login({ token: token.rtmToken });
       await this.rtm.subscribe(token.channel);
 

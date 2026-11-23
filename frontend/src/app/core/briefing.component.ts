@@ -25,11 +25,13 @@ interface Briefing {
   standalone: true,
   template: `
     <div class="card">
-      <h3>Outcome</h3>
+      <h3>Today's briefing</h3>
       @if (error()) { <p class="error">{{ error() }}</p> }
       @if (notice()) { <p class="ok">{{ notice() }}</p> }
-      <button (click)="seed()">Load demo context</button>
-      <button (click)="runReminders()">Send due reminders now</button>
+      <div class="row">
+        <button (click)="seed()">Load demo context</button>
+        <button class="secondary" (click)="runReminders()">Send due reminders now</button>
+      </div>
       @if (data(); as b) {
         <h4>Preferences</h4>
         @for (entry of preferenceList(b); track entry) { <p>{{ entry }}</p> } @empty { <p class="muted">None saved.</p> }
@@ -38,7 +40,7 @@ interface Briefing {
         @if (!b.calendar.connected) { <p class="error">Google Calendar not connected.</p> }
         @if (b.calendar.error) { <p class="error">{{ b.calendar.error }}</p> }
         @for (e of b.calendar.events ?? []; track e.id) {
-          <p>{{ e.start }} {{ e.summary }} @if (e.link) { <a [href]="e.link" target="_blank" rel="noopener">open</a> }</p>
+          <p>{{ when(e.start) }} {{ e.summary }} @if (e.link) { <a [href]="e.link" target="_blank" rel="noopener">open</a> }</p>
         } @empty { @if (b.calendar.connected && !b.calendar.error) { <p class="muted">No events.</p> } }
 
         <h4>Pending tasks</h4>
@@ -84,6 +86,13 @@ export class BriefingComponent implements OnInit, OnDestroy {
 
   preferenceList(b: Briefing): string[] {
     return Object.entries(b.preferences).map(([key, value]) => `${key}: ${value}`);
+  }
+
+  when(iso: string): string {
+    if (!iso.includes('T')) {
+      return iso;
+    }
+    return new Date(iso).toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
   }
 
   async refresh(): Promise<void> {

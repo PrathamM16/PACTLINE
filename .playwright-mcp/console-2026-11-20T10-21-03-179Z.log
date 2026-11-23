@@ -1,0 +1,23 @@
+[    4232ms] [LOG] 15:51:07:410 %cAgora-SDK [DEBUG]: color: #64B5F6; browser ua:  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 @ http://localhost:4200/main.js:50
+[    4233ms] [LOG] 15:51:07:411 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser info:  {name: Chrome, version: 157, os: Windows 10, osVersion: 10, browserVersion: 157.0.0.0} @ http://localhost:4200/main.js:50
+[    4233ms] [LOG] 15:51:07:411 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser compatibility:  {getDisplayMedia: true, getStreamFromExtension: true, supportUnifiedPlan: true, supportMinBitrate: true, supportSetRtpSenderParameters: true} @ http://localhost:4200/main.js:50
+[    4328ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://www.chromium.org/developers/design-documents/create-amazing-password-forms) %o @ http://localhost:4200/login:1
+[    4348ms] [LOG] 10:21:07.526 wasm-module initialized @ http://localhost:4200/main.js:208
+[    4413ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:4200/favicon.ico:1
+[ 2736244ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:4200/@vite/client:958
+[ 2736248ms] [ERROR] WebSocket connection to 'ws://localhost:4200/' failed: Error in connection establishment: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:4200/@vite/client:1029
+[ 3189482ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://www.chromium.org/developers/design-documents/create-amazing-password-forms) %o @ http://localhost:4200/login:1
+[ 3189678ms] [LOG] 11:14:12.856 wasm-module initialized @ http://localhost:4200/main.js:208
+[ 3189682ms] [LOG] 16:44:12:860 %cAgora-SDK [DEBUG]: color: #64B5F6; browser ua:  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 @ http://localhost:4200/main.js:50
+[ 3189682ms] [LOG] 16:44:12:861 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser info:  {name: Chrome, version: 157, os: Windows 10, osVersion: 10, browserVersion: 157.0.0.0} @ http://localhost:4200/main.js:50
+[ 3189684ms] [LOG] 16:44:12:862 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser compatibility:  {getDisplayMedia: true, getStreamFromExtension: true, supportUnifiedPlan: true, supportMinBitrate: true, supportSetRtpSenderParameters: true} @ http://localhost:4200/main.js:50
+[ 3189693ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:4200/@vite/client:958
+[ 3189696ms] [ERROR] WebSocket connection to 'ws://localhost:4200/' failed: Error in connection establishment: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:4200/@vite/client:1029
+[ 3726644ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://www.chromium.org/developers/design-documents/create-amazing-password-forms) %o @ http://localhost:4200/login:1
+[ 3726656ms] [LOG] 11:23:09.834 wasm-module initialized @ http://localhost:4200/main.js:208
+[ 3726757ms] [LOG] 16:53:09:936 %cAgora-SDK [DEBUG]: color: #64B5F6; browser ua:  Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 @ http://localhost:4200/main.js:50
+[ 3726758ms] [LOG] 16:53:09:936 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser info:  {name: Chrome, version: 157, os: Windows 10, osVersion: 10, browserVersion: 157.0.0.0} @ http://localhost:4200/main.js:50
+[ 3726758ms] [LOG] 16:53:09:936 %cAgora-SDK [INFO]: color: #1E88E5; font-weight: bold; browser compatibility:  {getDisplayMedia: true, getStreamFromExtension: true, supportUnifiedPlan: true, supportMinBitrate: true, supportSetRtpSenderParameters: true} @ http://localhost:4200/main.js:50
+[ 3740717ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:4200/@vite/client:958
+[ 3740721ms] [ERROR] WebSocket connection to 'ws://localhost:4200/' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:4200/@vite/client:1029
+[ 3741736ms] [ERROR] WebSocket connection to 'ws://localhost:4200/' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:4200/@vite/client:1029

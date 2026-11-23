@@ -74,10 +74,14 @@ class GoogleCalendar:
     def _events_url(self) -> str:
         return EVENTS_URL.format(calendar=quote(self._calendar_id, safe=""))
 
-    @staticmethod
-    def _summarise(item: dict) -> dict:
+    def _local(self, value: str | None) -> str | None:
+        if not value or "T" not in value:
+            return value
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(ZoneInfo(self._tz)).isoformat()
+
+    def _summarise(self, item: dict) -> dict:
         start, end = item.get("start", {}), item.get("end", {})
-        return {"id": item.get("id"), "summary": item.get("summary", "(no title)"), "start": start.get("dateTime") or start.get("date"), "end": end.get("dateTime") or end.get("date"), "all_day": "date" in start, "link": item.get("htmlLink")}
+        return {"id": item.get("id"), "summary": item.get("summary", "(no title)"), "start": self._local(start.get("dateTime")) or start.get("date"), "end": self._local(end.get("dateTime")) or end.get("date"), "all_day": "date" in start, "link": item.get("htmlLink")}
 
     def list_events(self, time_min: datetime, time_max: datetime) -> list[dict]:
         query = urlencode({"timeMin": self._aware(time_min).isoformat(), "timeMax": self._aware(time_max).isoformat(), "singleEvents": "true", "orderBy": "startTime", "maxResults": 50})

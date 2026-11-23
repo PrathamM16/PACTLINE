@@ -9,13 +9,13 @@ import { authenticate } from './auth';
   imports: [FormsModule],
   template: `
     <h2>{{ mode() === 'login' ? 'Sign in' : 'Create account' }}</h2>
-    <div class="card">
+    <div class="card stack">
       @if (mode() === 'register') { <input placeholder="Your name" [(ngModel)]="name"> }
-      <input placeholder="Email" type="email" [(ngModel)]="email">
-      <input placeholder="Password (10+ characters)" type="password" [(ngModel)]="password">
+      <input placeholder="Email" type="email" [(ngModel)]="email" (keyup.enter)="submit()">
+      <input placeholder="Password (10+ characters)" type="password" [(ngModel)]="password" (keyup.enter)="submit()">
       @if (error()) { <p class="error">{{ error() }}</p> }
       <button (click)="submit()" [disabled]="busy()">{{ mode() === 'login' ? 'Sign in' : 'Register' }}</button>
-      <button (click)="toggle()" class="muted">{{ mode() === 'login' ? 'Need an account?' : 'Have an account?' }}</button>
+      <button (click)="toggle()" class="secondary">{{ mode() === 'login' ? 'Need an account?' : 'Have an account?' }}</button>
     </div>
   `,
 })

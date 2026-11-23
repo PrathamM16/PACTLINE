@@ -15,7 +15,7 @@ interface ServiceState { configured: boolean; verified_live: boolean; }
     @for (entry of services() | keyvalue; track entry.key) {
       <div class="card">
         <strong>{{ entry.key }}</strong>
-        <span [class]="entry.value.configured ? 'ok' : 'error'">{{ entry.value.configured ? ' configured' : ' not configured' }}</span>
+        <span class="badge" [class.live]="entry.value.configured" [class.bad]="!entry.value.configured" style="margin-left: 8px">{{ entry.value.configured ? 'configured' : 'not configured' }}</span>
       </div>
     }
   `,

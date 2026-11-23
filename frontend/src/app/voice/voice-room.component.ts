@@ -9,23 +9,30 @@ import { ConvoSession, AgentState, TranscriptLine } from './convo-session';
   imports: [ApprovalsComponent, BriefingComponent],
   template: `
     <h2>Voice room</h2>
-    <div class="card">
-      <p>Agent state: <strong>{{ state() }}</strong></p>
-      @if (error()) { <p class="error">{{ error() }}</p> }
-      <button (click)="start()" [disabled]="busy()">Start</button>
-      <button (click)="interrupt()" [disabled]="state() !== 'SPEAKING'">Interrupt</button>
-      <button (click)="stop()" [disabled]="!busy()">End</button>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <p>Agent state: <span class="badge" [class.live]="state() === 'LISTENING' || state() === 'SPEAKING'" [class.bad]="state() === 'ERROR'">{{ state() }}</span></p>
+          @if (error()) { <p class="error">{{ error() }}</p> }
+          <div class="row" style="margin-top: 12px">
+            <button (click)="start()" [disabled]="busy()">Start</button>
+            <button class="secondary" (click)="interrupt()" [disabled]="state() !== 'SPEAKING'">Interrupt</button>
+            <button class="danger" (click)="stop()" [disabled]="!busy()">End</button>
+          </div>
+          <p class="muted" style="margin-top: 12px">Press Start, allow the microphone, then speak. Anything that changes data (calendar events, tasks, reminders) waits below until you press Approve.</p>
+        </div>
+        <div class="card">
+          <h3>Live transcript</h3>
+          @for (line of lines(); track line.uid + '-' + line.turnId) {
+            <p><span class="muted">{{ line.uid === agentUid ? 'PACTLINE' : 'You' }}:</span> {{ line.text }}@if (!line.final) { … }</p>
+          } @empty {
+            <p class="muted">Nothing said yet.</p>
+          }
+        </div>
+        <app-approvals />
+      </div>
+      <app-briefing />
     </div>
-    <div class="card">
-      <h3>Live transcript</h3>
-      @for (line of lines(); track line.uid + '-' + line.turnId) {
-        <p><span class="muted">{{ line.uid === agentUid ? 'PACTLINE' : 'You' }}:</span> {{ line.text }}@if (!line.final) { … }</p>
-      } @empty {
-        <p class="muted">Nothing said yet.</p>
-      }
-    </div>
-    <app-approvals />
-    <app-briefing />
   `,
 })
 export class VoiceRoomComponent implements OnDestroy {

@@ -116,7 +116,7 @@ def build_join_payload(channel: str, agent_token: str, user_uid: int, tool_token
 
 def load_settings() -> dict:
     return {
-        "llm_url": os.environ.get("LLM_URL", "https://api.openai.com/v1/chat/completions"),
+        "llm_url": os.environ.get("LLM_URL") or "https://api.openai.com/v1/chat/completions",
         "llm_api_key": _env("LLM_API_KEY"),
         "llm_model": _env("LLM_MODEL"),
         "murf_api_key": _env("MURF_API_KEY"),
