@@ -10,7 +10,7 @@ Your `.env` file is configured with:
 
 ```env
 SONARQUBE_CLOUD_URL=https://sonarcloud.io
-SONARQUBE_TOKEN=f874a6b10cbc39f8bbd3ec2ef1d2ec60028417c0
+SONARQUBE_TOKEN=
 SONARQUBE_PROJECT_KEY=PrathamM16_PACTLINE
 SONARQUBE_ORGANIZATION=prathamm16
 ```
